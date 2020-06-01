@@ -9,7 +9,7 @@
 #   modules: <modules artifact name>
 
 jobs:
-- job: win_64
+- job: ${{ parameters.vs }}_win_64
   pool:
     vmImage: ${{ parameters.vmImage }}
   timeoutInMinutes: 90
