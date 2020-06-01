@@ -2730,8 +2730,10 @@ def run(root=None):
   parser.add_argument('action', nargs='*', help="Actions for building")
   parser.add_argument(
     "--builder",
+    nargs="?",
     help="Builder: " + ",".join(list(builders.keys())),
-    default="cctbx")
+    default="cctbx",
+    const="cctbx")
   parser.add_argument("--cciuser", help="CCI SVN username.")
   parser.add_argument("--sfuser", help="SourceForge SVN username.")
   parser.add_argument("--revert", help="SVN string to revert all SVN trees")
