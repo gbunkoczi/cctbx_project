@@ -4,12 +4,14 @@
 # https://github.com/actions/virtual-environments/blob/master/images/win/Windows2019-Readme.md
 #
 # Parameters:
+#   vmImage: vs2017-win2016, windows-2019
+#   vs: vs2015, vs2017
 #   modules: <modules artifact name>
 
 jobs:
 - job: win_64
   pool:
-    vmImage: vs2017-win2016
+    vmImage: ${{ parameters.vmImage }}
   timeoutInMinutes: 90
   strategy:
     maxParallel: 2
@@ -76,7 +78,9 @@ jobs:
 
   - script: |
       choco install microsoft-visual-cpp-build-tools
-    condition: not(eq(variables['PYTHON_VERSION'], 'py27'))
+    condition: >
+      and(not(eq(variables['PYTHON_VERSION'], 'py27')),
+          eq('${{ parameters.vs }}', 'vs2015'))
     displayName: Install Visual C++ Build Tools 2015
 
   # download components
@@ -159,14 +163,20 @@ jobs:
     continueOnError: true
     failOnStderr: false
 
-  # build
+  # build (cctbx for vs2008 and vs2015, cctbxlite for vs2017)
+  - script: echo "##vso[task.setvariable variable=builder]cctbxlite"
+    condition: eq('${{ parameters.vs }}', 'vs2017'))
+
+  - script: echo "##vso[task.setvariable variable=extra_modules]cma_es fable rstbx spotfinder phenix_regression phenix_examples"
+    condition: eq('${{ parameters.vs }}', 'vs2017'))
+
   - script: |
       cd $(Pipeline.Workspace)
       call "C:\Program Files (x86)\Common Files\Microsoft\Visual C++ for Python\9.0\vcvarsall.bat" amd64
       call %CONDA%\condabin\activate.bat %PYTHON_VERSION%
-      python bootstrap.py build --builder=cctbx --use-conda=%CONDA_PREFIX% --nproc=4
+      python bootstrap.py build --builder=$(builder) --use-conda=%CONDA_PREFIX% --nproc=4
       call .\build\setpaths.bat
-      call libtbx.configure cma_es fable rstbx spotfinder cbflib_adaptbx phenix_regression phenix_examples
+      call libtbx.configure $(extra modules)
       cd build
       call libtbx.scons -j 4
       call libtbx.scons -j 4
@@ -177,9 +187,9 @@ jobs:
       cd $(Pipeline.Workspace)
       call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\amd64\vcvars64.bat"
       call %CONDA%\condabin\activate.bat %PYTHON_VERSION%
-      python bootstrap.py build --builder=cctbx --use-conda=%CONDA_PREFIX% --nproc=4
+      python bootstrap.py build --builder=$(builder) --use-conda=%CONDA_PREFIX% --nproc=4
       call .\build\setpaths.bat
-      call libtbx.configure cma_es fable rstbx simtbx spotfinder cbflib_adaptbx phenix_regression phenix_examples
+      call libtbx.configure $(extra_modules)
       cd build
       call libtbx.scons -j 4
       call libtbx.scons -j 4
