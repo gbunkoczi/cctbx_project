@@ -165,10 +165,10 @@ jobs:
 
   # build (cctbx for vs2008 and vs2015, cctbxlite for vs2017)
   - script: echo "##vso[task.setvariable variable=builder]cctbxlite"
-    condition: eq('${{ parameters.vs }}', 'vs2017'))
+    condition: eq('${{ parameters.vs }}', 'vs2017')
 
   - script: echo "##vso[task.setvariable variable=extra_modules]cma_es fable rstbx spotfinder phenix_regression phenix_examples"
-    condition: eq('${{ parameters.vs }}', 'vs2017'))
+    condition: eq('${{ parameters.vs }}', 'vs2017')
 
   - script: |
       cd $(Pipeline.Workspace)
