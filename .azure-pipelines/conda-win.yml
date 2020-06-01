@@ -174,7 +174,7 @@ jobs:
       cd $(Pipeline.Workspace)
       call "C:\Program Files (x86)\Common Files\Microsoft\Visual C++ for Python\9.0\vcvarsall.bat" amd64
       call %CONDA%\condabin\activate.bat %PYTHON_VERSION%
-      python bootstrap.py build --builder=$(builder) --use-conda=%CONDA_PREFIX% --nproc=4
+      python bootstrap.py build --use-conda=%CONDA_PREFIX% --nproc=4 --builder=$(builder)
       call .\build\setpaths.bat
       call libtbx.configure $(extra modules)
       cd build
@@ -187,7 +187,7 @@ jobs:
       cd $(Pipeline.Workspace)
       call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\amd64\vcvars64.bat"
       call %CONDA%\condabin\activate.bat %PYTHON_VERSION%
-      python bootstrap.py build --builder=$(builder) --use-conda=%CONDA_PREFIX% --nproc=4
+      python bootstrap.py build --use-conda=%CONDA_PREFIX% --nproc=4 --builder=$(builder)
       call .\build\setpaths.bat
       call libtbx.configure $(extra_modules)
       cd build
